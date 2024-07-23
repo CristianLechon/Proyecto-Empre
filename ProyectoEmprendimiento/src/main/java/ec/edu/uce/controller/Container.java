@@ -1,5 +1,6 @@
 package ec.edu.uce.controller;
 
+import ec.edu.uce.enums.TipoAditivo;
 import ec.edu.uce.enums.TipoGasolina;
 import ec.edu.uce.model.AdminManager;
 import ec.edu.uce.model.Dispatcher;
@@ -9,11 +10,15 @@ import ec.edu.uce.view.AdminMetod;
 import ec.edu.uce.view.UserLoginFrame;
 
 import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Container {
 
     private GasolineraManager gasolineraManager;
-    private float precioPorGalon, galonesComprados;
+    private float precioPorGalon, galonesComprados, precioAditivo;
+    private int aditivoComprado;
+    private Map<TipoAditivo, Integer> aditivosCarrito = new HashMap<>();
 
     public Container() {
         this.gasolineraManager = new GasolineraManager();
@@ -72,5 +77,29 @@ public class Container {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "Ingrese un valor válido", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public void Comprar(int cantidad, GasolineraManager gasolinera, TipoAditivo tipoAditivo) {
+        try {
+            precioAditivo = gasolineraManager.obtenerPrecioAditivo(tipoAditivo);
+            aditivoComprado = cantidad;
+
+            if (aditivoComprado >= gasolinera.obtenerUnidades(tipoAditivo)) {
+                JOptionPane.showMessageDialog(null, "No hay suficientes unidades disponibles", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                //gasolinera.actualizarGalones(tipoGasolina, galonesComprados);
+                gasolinera.actualizarUnidades(tipoAditivo, aditivoComprado);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Ingrese un valor válido", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void agregarAditivo(TipoAditivo aditivo, int cantidad) {
+        aditivosCarrito.put(aditivo, cantidad);
+    }
+
+    public Map<TipoAditivo, Integer> obtenerAditivosCarrito() {
+        return aditivosCarrito;
     }
 }

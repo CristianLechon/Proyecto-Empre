@@ -1,6 +1,7 @@
 package ec.edu.uce.view;
 
 import ec.edu.uce.controller.Container;
+import ec.edu.uce.enums.TipoAditivo;
 import ec.edu.uce.enums.TipoGasolina;
 import ec.edu.uce.model.GasolineraManager;
 
@@ -17,6 +18,7 @@ public class RecargaFrame extends JFrame {
     private Container container;
     private float galonesComprados;
     private float precio;
+    private int cantidadAditivo;
 
     public RecargaFrame(GasolineraManager gasolinera, TipoGasolina tipoGasolina) {
         this.gasolineraManager = gasolinera;
@@ -159,7 +161,7 @@ public class RecargaFrame extends JFrame {
     }
 
     // Clase interna para los botones redondeados
-    private static class RoundedButton extends JButton {
+    static class RoundedButton extends JButton {
         public RoundedButton(String text, String colorHex) {
             super(text);
             setFocusPainted(false);
@@ -181,6 +183,10 @@ public class RecargaFrame extends JFrame {
             super.paintComponent(g);
             g2d.dispose();
         }
+    }
+
+    public int getCantidadAditivo() {
+        return cantidadAditivo;
     }
 
     public float getPrecio() {

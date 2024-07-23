@@ -1,9 +1,9 @@
 package ec.edu.uce.enums;
 
 public enum TipoAditivo {
-    OCTANE("Octane_Booster"),
-    INJECTOR("Injector_Cleaner"),
-    DINJERCTOR("Diesel_Injector");
+    OCTANE_BOOSTER("Octane_Booster"),
+    INJECTOR_CLEANER("Injector_Cleaner"),
+    DIESEL_INJECTOR("Diesel_Injector");
 
     private String nombre;
 

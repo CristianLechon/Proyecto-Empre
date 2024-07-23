@@ -5,9 +5,7 @@ public enum TipoGasolina {
     EXTRA("Extra"),
     DIESEL("Diesel");
 
-
-
-    private String nombre;
+    private final String nombre;
 
     TipoGasolina(String nombre) {
         this.nombre = nombre;

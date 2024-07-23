@@ -1,6 +1,9 @@
 package ec.edu.uce.view;
 
+import ec.edu.uce.controller.Container;
+import ec.edu.uce.enums.TipoAditivo;
 import ec.edu.uce.enums.TipoGasolina;
+import ec.edu.uce.model.Aditivo;
 import ec.edu.uce.model.Cliente;
 import ec.edu.uce.model.GasolineraManager;
 import ec.edu.uce.util.FacturaPDF;
@@ -8,6 +11,8 @@ import ec.edu.uce.util.ImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GasolinaFrame extends JFrame {
 
@@ -21,10 +26,14 @@ public class GasolinaFrame extends JFrame {
     private JTextField fechaVencimientoField;
     private JTextField cvvField;
     private JPanel tarjetaPanel;
+    private Container container;
+    private int cantidadAditivo;
+    private List<TipoAditivo> aditivosSeleccionados;
 
     public GasolinaFrame(Cliente cliente) {
         this.cliente = cliente;
         gasolinera = new GasolineraManager();
+        aditivosSeleccionados = new ArrayList<>();
 
         setTitle("Gasolinera ANETA");
         setSize(1200, 900);
@@ -147,6 +156,46 @@ public class GasolinaFrame extends JFrame {
         gbc.gridwidth = 2;
         gasolinaPanel.add(tarjetaPanel, gbc);
 
+        // Panel para selección de aditivos
+        JPanel aditivosPanel = new JPanel();
+        aditivosPanel.setLayout(new BoxLayout(aditivosPanel, BoxLayout.Y_AXIS));
+        aditivosPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE), "Seleccionar Aditivos", 0, 0, new Font("Arial", Font.BOLD, 14), Color.WHITE));
+
+// ComboBox para seleccionar aditivos
+        JComboBox<TipoAditivo> aditivosComboBox = new JComboBox<>(TipoAditivo.values());
+        aditivosComboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        aditivosComboBox.setPreferredSize(new Dimension(200, 30));
+        aditivosPanel.add(new JLabel("Seleccione el aditivo:"));
+        aditivosPanel.add(aditivosComboBox);
+
+// Campo para la cantidad del aditivo
+        JTextField cantidadAditivoField = new JTextField();
+        cantidadAditivoField.setPreferredSize(new Dimension(200, 30));
+        cantidadAditivoField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        cantidadAditivoField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        aditivosPanel.add(new JLabel("Cantidad del aditivo:"));
+        aditivosPanel.add(cantidadAditivoField);
+
+// Agregar panel de aditivos al panel principal
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        mainPanel.add(aditivosPanel, gbc);
+
+// Botón para agregar aditivo
+        JButton agregarAditivoButton = new RoundedButton("Agregar Aditivo", "#FFD700");
+        agregarAditivoButton.setPreferredSize(new Dimension(200, 30));
+        agregarAditivoButton.addActionListener(e -> {
+            TipoAditivo aditivoSeleccionado = (TipoAditivo) aditivosComboBox.getSelectedItem();
+            int cantidad = Integer.parseInt(cantidadAditivoField.getText());
+
+            aditivosSeleccionados.add(aditivoSeleccionado);
+
+            JOptionPane.showMessageDialog(GasolinaFrame.this, "Aditivo agregado al carrito: " + aditivoSeleccionado + ", Cantidad: " + cantidad, "Aditivo Agregado", JOptionPane.INFORMATION_MESSAGE);
+        });
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        mainPanel.add(agregarAditivoButton, gbc);
+
         // Manejador de eventos para mostrar u ocultar el panel de tarjeta
         tarjetaRadioButton.addActionListener(e -> tarjetaPanel.setVisible(true));
         efectivoRadioButton.addActionListener(e -> tarjetaPanel.setVisible(false));
@@ -183,12 +232,11 @@ public class GasolinaFrame extends JFrame {
                     JOptionPane.showMessageDialog(GasolinaFrame.this, "Por favor, complete todos los campos de la tarjeta.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                // Puedes agregar validaciones adicionales para el número de tarjeta, fecha de vencimiento y CVV aquí
+                validarTarjeta(numeroTarjeta, fechaVencimiento, cvv);
             }
 
             // Generar la factura PDF
-            FacturaPDF.generarFactura(cliente, gasolinera, tipoGasolina, precio, galonesComprados, total, iva, total_iva, tipoPago);
+            FacturaPDF.generarFactura(cliente, gasolinera, tipoGasolina, precio, galonesComprados, total, iva, total_iva, tipoPago, aditivosSeleccionados);
             JOptionPane.showMessageDialog(GasolinaFrame.this, "Factura generada para: " + cliente.getNombre(), "Factura", JOptionPane.INFORMATION_MESSAGE);
         });
         gbc.gridy = 5;  // Asegúrate de que esta fila no esté ocupada por otros componentes
@@ -216,6 +264,21 @@ public class GasolinaFrame extends JFrame {
 
         setVisible(true);
     }
+
+    private boolean validarTarjeta(String numeroTarjeta, String fechaVencimiento, String cvv) {
+        // Ejemplo de validación simple
+        if (!numeroTarjeta.matches("\\d{16}")) {
+            return false;
+        }
+        if (!fechaVencimiento.matches("\\d{2}/\\d{2}")) {
+            return false;
+        }
+        if (!cvv.matches("\\d{3}")) {
+            return false;
+        }
+        return true;
+    }
+
 
     // Clase interna para los botones redondeados
     private static class RoundedButton extends JButton {
