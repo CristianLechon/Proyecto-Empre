@@ -250,14 +250,18 @@ public class GasolinaFrame extends JFrame {
         float galones = gasolineraManager.returnGalones(tipoGasolina);
         float nuevosGalones = gasolineraManager.returnGalones(tipoGasolina) - litrosRecargar;
         gasolineraManager.actualizarGalonesDisponibles(tipoGasolina, nuevosGalones);
-        float totaAditivos = carritoAditivos.calcularTotalAditivos();
-        float montoTotal = dineroRecargar + carritoAditivos.calcularTotalAditivos();
+        float totalAditivos = carritoAditivos.calcularTotalAditivos();
+        float montoTotal = dineroRecargar + totalAditivos;
         mostrarMensajeRecarga(litrosRecargar, tipoGasolina, montoTotal);
 
-        FacturaPDF.generarFactura(cliente,tipoGasolina,precioPorLitro,galones,total,iva,total_iva,"Efectivo", totaAditivos,gasolineraManager);
+        String metodoPago = tarjetaRadioButton.isSelected() ? "Tarjeta" : "Efectivo";
+        String numeroTarjeta = tarjetaRadioButton.isSelected() ? numeroTarjetaField.getText() : "";
+
+        //FacturaPDF.generarFactura(cliente, despachador, tipoGasolina, precioPorLitro, galones, total, iva, total_iva, metodoPago, totalAditivos, numeroTarjeta);
 
         actualizarGalonesLabel();
     }
+
 
     private boolean validarDatosTarjeta() {
         String numeroTarjeta = numeroTarjetaField.getText();

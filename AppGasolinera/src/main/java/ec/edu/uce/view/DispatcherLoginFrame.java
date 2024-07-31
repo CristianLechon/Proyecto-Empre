@@ -1,7 +1,6 @@
 package ec.edu.uce.view;
 
 import ec.edu.uce.controller.Container;
-import ec.edu.uce.model.Dispatcher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +12,7 @@ public class DispatcherLoginFrame extends JFrame {
     private Container container;
     private boolean isRegisterMode;
     private JLabel lastNameLabel;
+    private JButton loginButton, registerButton, toggleButton;
 
     public DispatcherLoginFrame() {
         setTitle("Login - Dispatcher");
@@ -22,18 +22,15 @@ public class DispatcherLoginFrame extends JFrame {
         setLocationRelativeTo(null);
 
         container = new Container();
-        isRegisterMode = false; // Inicialmente en modo Login
+        isRegisterMode = false;
 
-        // Panel principal con fondo degradado
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                // Definir los colores del degradado
-                Color color1 = Color.decode("#FFD700"); // Amarillo
-                Color color2 = Color.decode("#000080"); // Azul
-                // Crear el degradado
+                Color color1 = Color.decode("#FFD700");
+                Color color2 = Color.decode("#000080");
                 GradientPaint gradient = new GradientPaint(0, 0, color1, getWidth(), getHeight(), color2);
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
@@ -42,41 +39,35 @@ public class DispatcherLoginFrame extends JFrame {
         panel.setLayout(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Añadir el logo
         JLabel logoLabel = new JLabel();
         ImageIcon logoIcon = new ImageIcon("src/main/resources/imagenes/anetaLog.png");
         logoLabel.setIcon(logoIcon);
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         panel.add(logoLabel, BorderLayout.NORTH);
 
-        // Panel para los campos de texto y etiquetas
         JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         inputPanel.setOpaque(false);
 
-        // Etiquetas y campos
         JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        usernameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         usernameLabel.setForeground(Color.WHITE);
         usernameField = new JTextField();
-        usernameField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-        usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
-        usernameField.setPreferredSize(new Dimension(200, 30));
+        usernameField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        usernameField.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         lastNameLabel = new JLabel("Last Name:");
-        lastNameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        lastNameLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         lastNameLabel.setForeground(Color.WHITE);
         lastNameField = new JTextField();
-        lastNameField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-        lastNameField.setFont(new Font("Arial", Font.PLAIN, 14));
-        lastNameField.setPreferredSize(new Dimension(200, 30));
+        lastNameField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        lastNameField.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        passwordLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
         passwordLabel.setForeground(Color.WHITE);
         passwordField = new JPasswordField();
-        passwordField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
-        passwordField.setPreferredSize(new Dimension(200, 30));
+        passwordField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+        passwordField.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         inputPanel.add(usernameLabel);
         inputPanel.add(usernameField);
@@ -87,18 +78,15 @@ public class DispatcherLoginFrame extends JFrame {
         inputPanel.add(passwordLabel);
         inputPanel.add(passwordField);
 
-        // Panel para los botones
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
 
-        JButton loginButton = new RoundedButton("Login", "#FFD700"); // Amarillo
-        JButton registerButton = new RoundedButton("Register", "#FF0000"); // Rojo
-        JButton toggleButton = new RoundedButton("Switch to Register", "#00FF00"); // Verde
+        loginButton = new RoundedButton("Login", "#4CAF50"); // Verde suave
+        registerButton = new RoundedButton("Register", "#FF5252"); // Rojo suave
+        toggleButton = new RoundedButton("Switch to Register", "#2196F3"); // Azul claro
 
         loginButton.addActionListener(e -> {
-            if (isRegisterMode) {
-                setRegisterMode(false);
-            } else {
+            if (!isRegisterMode) {
                 String username = usernameField.getText().trim();
                 String password = new String(passwordField.getPassword());
                 container.loginDispatcher(username, password);
@@ -117,21 +105,19 @@ public class DispatcherLoginFrame extends JFrame {
                     return;
                 }
                 container.registerDispatcher(username, lastName, password);
-
             }
         });
 
         toggleButton.addActionListener(e -> setRegisterMode(!isRegisterMode));
 
         buttonPanel.add(loginButton);
+        registerButton.setVisible(false);
         buttonPanel.add(registerButton);
         buttonPanel.add(toggleButton);
 
-        // Añadir paneles al panel principal
         panel.add(inputPanel, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Fondo y diseño del JFrame
         getContentPane().setBackground(Color.WHITE);
         add(panel);
 
@@ -140,15 +126,15 @@ public class DispatcherLoginFrame extends JFrame {
 
     private void setRegisterMode(boolean registerMode) {
         this.isRegisterMode = registerMode;
-        // Actualizar la visibilidad de los campos
         lastNameField.setVisible(registerMode);
         lastNameLabel.setVisible(registerMode);
-        // Actualizar las etiquetas y campos en el panel de entrada
+        registerButton.setVisible(registerMode);
+        loginButton.setVisible(!registerMode);
+        toggleButton.setText(registerMode ? "Switch to Login" : "Switch to Register");
         ((JPanel) getContentPane().getComponent(0)).revalidate();
         ((JPanel) getContentPane().getComponent(0)).repaint();
     }
 
-    // Clase interna para los botones redondeados
     static class RoundedButton extends JButton {
         public RoundedButton(String text, String colorHex) {
             super(text);
@@ -157,8 +143,8 @@ public class DispatcherLoginFrame extends JFrame {
             setOpaque(true);
             setForeground(Color.WHITE);
             setBackground(Color.decode(colorHex));
-            setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-            setFont(new Font("Arial", Font.BOLD, 14));
+            setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15)); // Borde interno para un diseño más plano
+            setFont(new Font("SansSerif", Font.BOLD, 14)); // Cambio de fuente
             setPreferredSize(new Dimension(120, 40));
         }
 
@@ -172,5 +158,4 @@ public class DispatcherLoginFrame extends JFrame {
             g2d.dispose();
         }
     }
-
 }

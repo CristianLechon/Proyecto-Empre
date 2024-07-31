@@ -2,10 +2,13 @@ package ec.edu.uce.view;
 
 import ec.edu.uce.model.Client;
 import ec.edu.uce.model.ClientManager;
-import ec.edu.uce.model.Dispatcher;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class ClientLoginFrame extends JFrame {
     private JTextField nombreField, lastNameField, matriculaField, ciField;
@@ -14,7 +17,6 @@ public class ClientLoginFrame extends JFrame {
     private JLabel matriculaLabel, nombreLabel, lastNameLabel, ciLabel;
 
     public ClientLoginFrame() {
-
         clientManager = new ClientManager();
 
         setTitle("Login - Usuario");
@@ -23,9 +25,8 @@ public class ClientLoginFrame extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
 
-
         // Panel principal con fondo degradado
-        panel = new JPanel() {
+        panel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -39,8 +40,27 @@ public class ClientLoginFrame extends JFrame {
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-        panel.setLayout(new GridLayout(5, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Añadir el logo de ANETA redimensionado
+        JLabel logoLabel = new JLabel();
+        try {
+            BufferedImage logoImage = ImageIO.read(new File("src/main/resources/imagenes/anetaLog.png"));
+            if (logoImage != null) {
+                Image scaledLogoImage = logoImage.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
+                logoLabel.setIcon(new ImageIcon(scaledLogoImage));
+            } else {
+                System.out.println("El logo de ANETA no se pudo cargar. Verifica la ruta del archivo.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error al cargar la imagen del logo: " + e.getMessage());
+            e.printStackTrace();
+        }
+        logoLabel.setHorizontalAlignment(JLabel.CENTER);
+        panel.add(logoLabel, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        formPanel.setOpaque(false);
 
         // Añadir componentes al panel
         matriculaLabel = new JLabel("Matrícula:");
@@ -51,13 +71,20 @@ public class ClientLoginFrame extends JFrame {
         matriculaField.setFont(new Font("Arial", Font.PLAIN, 14));
         matriculaField.setPreferredSize(new Dimension(200, 30));
 
+        // Añadir texto guía para la matrícula
+        JLabel guiaLabel = new JLabel("Añadir la placa sin guion por ejemplo ABC123");
+        guiaLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        guiaLabel.setForeground(Color.WHITE);
+
         JButton checkButton = new RoundedButton("Check Matrícula", "#FFD700");
         checkButton.addActionListener(e -> checkMatricula());
 
-        panel.add(matriculaLabel);
-        panel.add(matriculaField);
-        panel.add(new JLabel());
-        panel.add(checkButton);
+        formPanel.add(matriculaLabel);
+        formPanel.add(matriculaField);
+        formPanel.add(guiaLabel);
+        formPanel.add(checkButton);
+
+        panel.add(formPanel, BorderLayout.CENTER);
 
         add(panel);
         setVisible(true);
@@ -74,14 +101,14 @@ public class ClientLoginFrame extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Matrícula no encontrada. Registre la matrícula.");
 
-            // Limpiar panel
-            panel.removeAll();
+            // Limpiar formPanel
+            panel.remove(1);
 
-            // Agregar componentes para registro
-            panel.setLayout(new GridLayout(6, 2, 10, 10));
+            JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+            formPanel.setOpaque(false);
 
-            panel.add(matriculaLabel);
-            panel.add(matriculaField);
+            formPanel.add(matriculaLabel);
+            formPanel.add(matriculaField);
 
             nombreLabel = new JLabel("Nombre:");
             nombreLabel.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -91,7 +118,7 @@ public class ClientLoginFrame extends JFrame {
             nombreField.setFont(new Font("Arial", Font.PLAIN, 14));
             nombreField.setPreferredSize(new Dimension(200, 30));
 
-            lastNameLabel = new JLabel("Apellido");
+            lastNameLabel = new JLabel("Apellido:");
             lastNameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
             lastNameLabel.setForeground(Color.WHITE);
             lastNameField = new JTextField();
@@ -107,15 +134,19 @@ public class ClientLoginFrame extends JFrame {
             ciField.setFont(new Font("Arial", Font.PLAIN, 14));
             ciField.setPreferredSize(new Dimension(200, 30));
 
-            panel.add(nombreLabel);
-            panel.add(nombreField);
-            panel.add(ciLabel);
-            panel.add(ciField);
+            formPanel.add(nombreLabel);
+            formPanel.add(nombreField);
+            formPanel.add(lastNameLabel);
+            formPanel.add(lastNameField);
+            formPanel.add(ciLabel);
+            formPanel.add(ciField);
 
             JButton registerButton = new RoundedButton("Register", "#FF0000");
             registerButton.addActionListener(e -> register());
-            panel.add(new JLabel());
-            panel.add(registerButton);
+            formPanel.add(new JLabel());
+            formPanel.add(registerButton);
+
+            panel.add(formPanel, BorderLayout.CENTER);
 
             // Revalidar y repintar el panel
             panel.revalidate();
@@ -139,6 +170,7 @@ public class ClientLoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "La matrícula ya está registrada.");
         }
     }
+
     // Clase interna para los botones redondeados
     private static class RoundedButton extends JButton {
         public RoundedButton(String text, String colorHex) {
@@ -163,5 +195,4 @@ public class ClientLoginFrame extends JFrame {
             g2d.dispose();
         }
     }
-
 }

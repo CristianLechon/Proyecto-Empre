@@ -76,7 +76,7 @@ public class SplashScreen extends JWindow {
         textTimeline.setEase(new Sine());
         textTimeline.playLoop(Timeline.RepeatBehavior.REVERSE);
 
-        Timer timer = new Timer(3000, e -> { // Esperar 3 segundos antes de comenzar el fade out
+        Timer timer = new Timer(300, e -> { // Esperar 3 segundos antes de comenzar el fade out
             Timeline fadeOut = new Timeline(this);
             fadeOut.addPropertyToInterpolate("opacity", 1.0f, 0.89f);
             fadeOut.setDuration(1000);

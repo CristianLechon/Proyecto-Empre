@@ -16,7 +16,7 @@ public class FacturaPDF {
 
     private static final String FACTURA_ID_FILE = "src/main/resources/factura_id.txt";
 
-    public static void generarFactura(Client cliente, TipoGasolina tipoGasolina, float precio, float galones, float total, float iva, float total_iva, String tipoPago,float totalAditivos, GasolineraManager gasolinera) {
+    public static void generarFactura(Client cliente, TipoGasolina tipoGasolina, float precioGasolina, float galones, float total, float iva, float total_iva, String tipoPago, float cantidadAditivos, int totalAditivos, GasolineraManager gasolinera, Dispatcher dispatcher) {
         int facturaId = obtenerYIncrementarFacturaId();
 
         String escritorio = System.getProperty("user.home") + File.separator + "Desktop";

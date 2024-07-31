@@ -12,6 +12,7 @@ public class AdminLoginFrame extends JFrame {
     private Container container;
     private boolean isRegisterMode;
     private JLabel lastNameLabel;
+    private JButton loginButton, registerButton, toggleButton;
 
     public AdminLoginFrame() {
         setTitle("Login - Admin");
@@ -89,9 +90,9 @@ public class AdminLoginFrame extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
 
-        JButton loginButton = new RoundedButton("Login", "#FFD700"); // Amarillo
-        JButton registerButton = new RoundedButton("Register", "#FF0000"); // Rojo
-        JButton toggleButton = new DispatcherLoginFrame.RoundedButton("Switch to Register", "#00FF00"); // Verde
+        loginButton = new RoundedButton("Login", "#FFD700"); // Amarillo
+        registerButton = new RoundedButton("Register", "#FF0000"); // Rojo
+        toggleButton = new DispatcherLoginFrame.RoundedButton("Switch to Register", "#00FF00"); // Verde
 
 
         loginButton.addActionListener(e -> {
@@ -121,6 +122,7 @@ public class AdminLoginFrame extends JFrame {
         toggleButton.addActionListener(e -> setRegisterMode(!isRegisterMode));
 
         buttonPanel.add(loginButton);
+        registerButton.setVisible(false);
         buttonPanel.add(registerButton);
         buttonPanel.add(toggleButton);
 
@@ -137,9 +139,14 @@ public class AdminLoginFrame extends JFrame {
 
     private void setRegisterMode(boolean registerMode) {
         this.isRegisterMode = registerMode;
-        // Actualizar la visibilidad de los campos
         lastNameField.setVisible(registerMode);
         lastNameLabel.setVisible(registerMode);
+        registerButton.setVisible(registerMode); // Show Register button only in register mode
+        loginButton.setVisible(!registerMode); // Hide Login button in register mode
+
+        // Update toggle button text
+        toggleButton.setText(registerMode ? "Switch to Login" : "Switch to Register");
+
         // Actualizar las etiquetas y campos en el panel de entrada
         ((JPanel) getContentPane().getComponent(0)).revalidate();
         ((JPanel) getContentPane().getComponent(0)).repaint();
